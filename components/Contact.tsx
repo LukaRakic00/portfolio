@@ -2,9 +2,16 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
+import { useTranslationSafe } from './Header'
+
+interface ContactData {
+  title: string
+  subtitle: string
+}
 
 export default function Contact() {
+  const { language } = useTranslationSafe()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [formData, setFormData] = useState({
@@ -13,6 +20,24 @@ export default function Contact() {
     message: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [contactData, setContactData] = useState<ContactData>({
+    title: 'Get In Touch',
+    subtitle: 'Have a project in mind? Let\'s work together to bring it to life',
+  })
+
+  useEffect(() => {
+    fetchContactData()
+  }, [language])
+
+  const fetchContactData = async () => {
+    try {
+      const response = await fetch(`/api/data/contact?lang=${language}`)
+      const data = await response.json()
+      setContactData(data)
+    } catch (error) {
+      console.error('Error fetching contact data:', error)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,11 +58,16 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="section-container bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950 relative overflow-hidden">
+    <section id="contact" className="section-container bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950 relative overflow-hidden group">
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }} />
+      </div>
+      
+      {/* Mouse interaction glow */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 via-purple-500/5 to-blue-500/5" />
       </div>
 
       {/* Grid Pattern */}
@@ -50,9 +80,9 @@ export default function Contact() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="section-title">Get In Touch</h2>
+          <h2 className="section-title">{contactData.title}</h2>
           <p className="section-subtitle max-w-2xl mx-auto">
-            Have a project in mind? Let&apos;s work together to bring it to life
+            {contactData.subtitle}
           </p>
         </motion.div>
 

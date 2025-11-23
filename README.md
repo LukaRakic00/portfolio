@@ -23,6 +23,56 @@ Moderni portfolio sajt napravljen sa Next.js i TypeScript.
 npm install
 ```
 
+2. Kreiraj `.env` fajl u root direktorijumu sa sledećim varijablama:
+
+**Za Redis Cloud (preporučeno):**
+```env
+# Redis Cloud Configuration (koristi REDIS_URL)
+REDIS_URL=redis://default:your-password@your-redis-host:your-redis-port
+# Ili sa TLS/SSL:
+# REDIS_URL=rediss://default:your-password@your-redis-host:your-redis-port
+
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
+# Admin Configuration
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+JWT_SECRET=your-secret-key-change-in-production
+```
+
+**Ili za lokalni Redis:**
+```env
+# Redis Configuration (lokalni server)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_TLS=false
+
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
+# Admin Configuration
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+JWT_SECRET=your-secret-key-change-in-production
+```
+
+**Napomena:** Ako koristiš Redis Cloud, dobićeš connection string u formatu:
+- `redis://default:password@host:port` (bez TLS)
+- `rediss://default:password@host:port` (sa TLS)
+
+Kopiraj taj string i stavi ga kao `REDIS_URL` u `.env` fajl.
+
+4. Za Cloudinary:
+   - Registruj se na [Cloudinary](https://cloudinary.com)
+   - Dobij API kredencijale iz dashboard-a
+   - Dodaj ih u `.env` fajl
+
 ## 🏃 Pokretanje
 
 Za development:
@@ -83,50 +133,44 @@ Stavite svoje slike u `/public/images` folder:
 
 **Napomena:** Ako slike ne postoje, prikazuje se placeholder sa gradientom.
 
+## 🔐 Admin Panel
+
+Admin panel omogućava upravljanje svim sadržajem sajta preko web interfejsa.
+
+### Pristup Admin Panelu
+
+1. Pokreni aplikaciju: `npm run dev`
+2. Idi na: `http://localhost:3000/admin/login`
+3. Prijavi se sa:
+   - Korisničko ime: `admin` (ili ono što si postavio u `.env`)
+   - Lozinka: `admin123` (ili ono što si postavio u `.env`)
+
+### Funkcionalnosti Admin Panela
+
+- **Hero Sekcija**: Upravljanje imenom, prezimenom, naslovom, opisom i CV linkom
+- **About Sekcija**: Upravljanje naslovom, podnaslovom, paragrafima i profilnom slikom
+- **Projekti**: Dodavanje, izmena i brisanje projekata sa slikama, opisima i tehnologijama
+- **Skills & Technologies**: Upravljanje tehnologijama sa ikonama (emoji ili slike)
+- **Contact Sekcija**: Upravljanje naslovom i podnaslovom kontakt sekcije
+- **Social Networks**: Upravljanje LinkedIn i ResearchGate linkovima i ikonama
+
+### Upload Slika
+
+Sve slike se automatski upload-uju na Cloudinary u folder `luka-portfolio`. Putanje se čuvaju u Redis bazi.
+
 ## 📝 Prilagođavanje Sadržaja
 
-### 1. Promena imena i zanimanja
+Sve promene se sada rade preko Admin Panela na `/admin`. Nema potrebe za ručnim menjanjem koda!
 
-U `components/Hero.tsx`:
-```tsx
-// Linija 34
-Ime Prezime  // Zamenite sa svojim imenom
+### Alternativno: Ručno menjanje
 
-// Linija 43
-Full Stack Developer  // Zamenite sa svojim zanimanjem
-```
-
-### 2. Promena About sekcije
-
-U `components/About.tsx`:
-- Zamenite Lorem Ipsum tekst sa svojom biografijom (linije 44-58)
-
-### 3. Promena projekata
-
-U `components/Projects.tsx`:
-- Izmenite niz `projects` (linije 9-50)
-- Promenite imena, opise, tehnologije i linkove projekata
-
-### 4. Promena tehnologija
-
-U `components/Skills.tsx`:
-- Izmenite niz `technologies` (linije 12-23)
-- Dodajte ili uklonite tehnologije
-
-### 5. Promena social linkova
-
-U `components/Header.tsx` i `components/Footer.tsx`:
-- Izmenite niz `socialLinks` (linije 15-19)
-- Zamenite placeholder linkove sa svojim LinkedIn, GitHub i ResearchGate profilima
-
-### 6. Dodavanje CV-a
-
-Zamenite `/public/cv-placeholder.pdf` sa svojim CV fajlom. Fajl mora da se zove `cv-placeholder.pdf` ili izmenite putanju u `components/Hero.tsx` (linija 11).
-
-### 7. SEO optimizacija
-
-U `app/layout.tsx`:
-- Promenite `title`, `description`, `keywords` i `authors` u metadata objektu (linije 10-19)
+Ako želiš da ručno menjaš podatke, svi podaci se čuvaju u Redis bazi sa sledećim ključevima:
+- `hero` - Hero sekcija
+- `about` - About sekcija
+- `projects` - Lista projekata
+- `skills` - Lista tehnologija
+- `contact` - Contact sekcija
+- `social` - Social networks linkovi
 
 ## 🎨 Prilagođavanje Boja
 

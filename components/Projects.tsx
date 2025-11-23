@@ -2,66 +2,51 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { trackProjectLink, isExternalURL } from '@/lib/utm'
+import { useTranslationSafe } from './Header'
 
-const projects = [
-  {
-    id: 1,
-    title: 'Project 1',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    image: '/images/project-1.jpg',
-    technologies: ['Next.js', 'React', 'TypeScript'],
-    link: '#',
-    gradient: 'from-blue-600 to-purple-600',
-  },
-  {
-    id: 2,
-    title: 'Project 2',
-    description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    image: '/images/project-2.jpg',
-    technologies: ['Node.js', 'Express', 'MongoDB'],
-    link: '#',
-    gradient: 'from-purple-600 to-pink-600',
-  },
-  {
-    id: 3,
-    title: 'Project 3',
-    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-    image: '/images/project-3.jpg',
-    technologies: ['React', 'Firebase', 'Tailwind CSS'],
-    link: '#',
-    gradient: 'from-pink-600 to-red-600',
-  },
-  {
-    id: 4,
-    title: 'Project 4',
-    description: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    image: '/images/project-4.jpg',
-    technologies: ['Next.js', 'PostgreSQL', 'Docker'],
-    link: '#',
-    gradient: 'from-blue-600 to-cyan-600',
-  },
-  {
-    id: 5,
-    title: 'Project 5',
-    description: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
-    image: '/images/project-5.jpg',
-    technologies: ['React', 'Node.js', 'AWS'],
-    link: '#',
-    gradient: 'from-purple-600 to-blue-600',
-  },
-]
+interface Project {
+  id: string
+  title: string
+  description: string
+  image: string
+  technologies: string[]
+  link: string
+  gradient: string
+}
 
 export default function Projects() {
+  const { language } = useTranslationSafe()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [projects, setProjects] = useState<Project[]>([])
+
+  useEffect(() => {
+    fetchProjects()
+  }, [language])
+
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch(`/api/data/projects?lang=${language}`)
+      const data = await response.json()
+      setProjects(data)
+    } catch (error) {
+      console.error('Error fetching projects:', error)
+    }
+  }
 
   return (
-    <section id="projects" className="section-container bg-slate-950 relative overflow-hidden">
+    <section id="projects" className="section-container bg-slate-950 relative overflow-hidden group">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]" />
+      
+      {/* Mouse interaction glow */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-blue-500/5" />
+      </div>
       
       <div ref={ref} className="max-w-7xl mx-auto relative z-10">
         <motion.div
@@ -77,16 +62,22 @@ export default function Projects() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} isInView={isInView} />
-          ))}
+          {projects.length > 0 ? (
+            projects.map((project, index) => (
+              <ProjectCard key={project.id} project={project} index={index} isInView={isInView} />
+            ))
+          ) : (
+            <div className="col-span-full text-center text-slate-400 py-12">
+              Nema projekata za prikaz
+            </div>
+          )}
         </div>
       </div>
     </section>
   )
 }
 
-function ProjectCard({ project, index, isInView }: { project: typeof projects[0], index: number, isInView: boolean }) {
+function ProjectCard({ project, index, isInView }: { project: Project, index: number, isInView: boolean }) {
   const [imageError, setImageError] = useState(false)
 
   return (
@@ -143,14 +134,27 @@ function ProjectCard({ project, index, isInView }: { project: typeof projects[0]
             ))}
           </div>
           
-          <Link
-            href={project.link}
-            className="btn-outline w-full text-center inline-block group/link"
-          >
-            <span className="group-hover/link:text-gradient transition-colors duration-300">
-              View Project →
-            </span>
-          </Link>
+          {isExternalURL(project.link) ? (
+            <a
+              href={trackProjectLink(project.link, project.title, 'projects-section')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline w-full text-center inline-block group/link"
+            >
+              <span className="group-hover/link:text-gradient transition-colors duration-300">
+                View Project →
+              </span>
+            </a>
+          ) : (
+            <Link
+              href={project.link}
+              className="btn-outline w-full text-center inline-block group/link"
+            >
+              <span className="group-hover/link:text-gradient transition-colors duration-300">
+                View Project →
+              </span>
+            </Link>
+          )}
         </div>
       </div>
     </motion.div>
