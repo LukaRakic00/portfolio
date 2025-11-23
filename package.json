@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@vitalets/google-translate-api": "^10.0.0",
+    "@vitalets/google-translate-api": "^9.2.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.3",
     "framer-motion": "^11.3.4",
