@@ -2,41 +2,20 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { trackProjectLink, isExternalURL } from '@/lib/utm'
 import { useTranslationSafe } from './Header'
-
-interface Project {
-  id: string
-  title: string
-  description: string
-  image: string
-  technologies: string[]
-  link: string
-  gradient: string
-}
+import { projectsData, type Project } from '@/data/projects'
 
 export default function Projects() {
   const { language } = useTranslationSafe()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const [projects, setProjects] = useState<Project[]>([])
 
-  useEffect(() => {
-    fetchProjects()
-  }, [language])
-
-  const fetchProjects = async () => {
-    try {
-      const response = await fetch(`/api/data/projects?lang=${language}`)
-      const data = await response.json()
-      setProjects(data)
-    } catch (error) {
-      console.error('Error fetching projects:', error)
-    }
-  }
+  // Use static data instead of API calls
+  const projects = useMemo(() => projectsData[language], [language])
 
   return (
     <section id="projects" className="section-container bg-slate-950 relative overflow-hidden group">
@@ -55,29 +34,49 @@ export default function Projects() {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <h2 className="section-title">Projects & Portfolio</h2>
+          <h2 className="section-title">{language === 'en' ? 'Projects & Portfolio' : 'Projekti & Portfolio'}</h2>
           <p className="section-subtitle max-w-2xl mx-auto">
-            A collection of my recent work and projects
+            {language === 'en' ? 'A collection of my recent work and projects' : 'Kolekcija mog nedavnog rada i projekata'}
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.length > 0 ? (
             projects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} isInView={isInView} />
+              <ProjectCard key={project.id} project={project} index={index} isInView={isInView} language={language} />
             ))
           ) : (
             <div className="col-span-full text-center text-slate-400 py-12">
-              Nema projekata za prikaz
+              {language === 'en' ? 'No projects to display' : 'Nema projekata za prikaz'}
             </div>
           )}
         </div>
+      </div>
+      
+      {/* Beautiful Gradient Wave Transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none overflow-hidden z-0">
+        <svg className="absolute bottom-0 left-0 w-full h-full" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="waveGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style={{ stopColor: '#1e293b', stopOpacity: 1 }} />
+              <stop offset="50%" style={{ stopColor: '#1e40af', stopOpacity: 0.8 }} />
+              <stop offset="100%" style={{ stopColor: '#7c3aed', stopOpacity: 0.6 }} />
+            </linearGradient>
+            <linearGradient id="waveGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style={{ stopColor: '#334155', stopOpacity: 0.9 }} />
+              <stop offset="50%" style={{ stopColor: '#3b82f6', stopOpacity: 0.7 }} />
+              <stop offset="100%" style={{ stopColor: '#8b5cf6', stopOpacity: 0.5 }} />
+            </linearGradient>
+          </defs>
+          <path d="M0,80 Q360,20 720,60 T1440,40 L1440,120 L0,120 Z" fill="url(#waveGradient1)" />
+          <path d="M0,100 Q360,40 720,80 T1440,60 L1440,120 L0,120 Z" fill="url(#waveGradient2)" />
+        </svg>
       </div>
     </section>
   )
 }
 
-function ProjectCard({ project, index, isInView }: { project: Project, index: number, isInView: boolean }) {
+function ProjectCard({ project, index, isInView, language }: { project: Project; index: number; isInView: boolean; language: 'en' | 'sr' }) {
   const [imageError, setImageError] = useState(false)
 
   return (
@@ -142,7 +141,7 @@ function ProjectCard({ project, index, isInView }: { project: Project, index: nu
               className="btn-outline w-full text-center inline-block group/link"
             >
               <span className="group-hover/link:text-gradient transition-colors duration-300">
-                View Project →
+                {language === 'en' ? 'View Project →' : 'Pogledaj Projekat →'}
               </span>
             </a>
           ) : (
@@ -151,7 +150,7 @@ function ProjectCard({ project, index, isInView }: { project: Project, index: nu
               className="btn-outline w-full text-center inline-block group/link"
             >
               <span className="group-hover/link:text-gradient transition-colors duration-300">
-                View Project →
+                {language === 'en' ? 'View Project →' : 'Pogledaj Projekat →'}
               </span>
             </Link>
           )}

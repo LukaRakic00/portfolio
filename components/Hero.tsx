@@ -2,83 +2,25 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import Image from 'next/image'
 import { trackSocialLink, isExternalURL } from '@/lib/utm'
 import InteractiveBackground from './InteractiveBackground'
-import TypewriterText from './TypewriterText'
+import MatrixLogo from './MatrixLogo'
 import { useTranslationSafe } from './Header'
-
-interface HeroData {
-  firstName: string
-  lastName: string
-  title: string
-  subtitle: string
-  description: string
-  cvUrl: string
-}
-
-interface SocialData {
-  linkedin: { url: string; icon: string }
-  researchgate: { url: string; icon: string }
-}
+import { heroData, type HeroData } from '@/data/hero'
+import { socialData, type SocialData } from '@/data/social'
 
 export default function Hero() {
   const { language } = useTranslationSafe()
-  const [heroData, setHeroData] = useState<HeroData>({
-    firstName: 'Ime',
-    lastName: 'Prezime',
-    title: 'Full Stack Developer',
-    subtitle: 'Creating Digital Experiences',
-    description: '',
-    cvUrl: '/cv-placeholder.pdf',
-  })
-  const [socialData, setSocialData] = useState<SocialData>({
-    linkedin: { url: 'https://linkedin.com', icon: '💼' },
-    researchgate: { url: 'https://researchgate.net', icon: '🔬' },
-  })
-  const [showFirstName, setShowFirstName] = useState(false)
-  const [showLastName, setShowLastName] = useState(false)
 
-  useEffect(() => {
-    fetchHeroData()
-    fetchSocialData()
-    // Start typewriter effect after a short delay
-    const timer = setTimeout(() => {
-      setShowFirstName(true)
-    }, 1000)
-    return () => clearTimeout(timer)
-  }, [language])
-
-  const fetchHeroData = async () => {
-    try {
-      const response = await fetch(`/api/data/hero?lang=${language}`)
-      const data = await response.json()
-      setHeroData(data)
-      // Reset typewriter when language changes
-      setShowFirstName(false)
-      setShowLastName(false)
-      setTimeout(() => {
-        setShowFirstName(true)
-      }, 500)
-    } catch (error) {
-      console.error('Error fetching hero data:', error)
-    }
-  }
-
-  const fetchSocialData = async () => {
-    try {
-      const response = await fetch(`/api/data/social?lang=${language}`)
-      const data = await response.json()
-      setSocialData(data)
-    } catch (error) {
-      console.error('Error fetching social data:', error)
-    }
-  }
+  // Use static data instead of API calls
+  const currentHeroData = useMemo(() => heroData[language], [language])
+  const currentSocialData = useMemo(() => socialData[language], [language])
 
   const downloadCV = () => {
     const link = document.createElement('a')
-    link.href = heroData.cvUrl
+    link.href = currentHeroData.cvUrl
     link.download = 'CV.pdf'
     link.click()
   }
@@ -102,116 +44,147 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/20 to-slate-950/40 pointer-events-none z-[5]" />
 
       <div className="section-container relative z-10 w-full">
-        <div className="text-center w-full">
-          <motion.h1
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 leading-tight font-mono"
-          >
-            <div className="block text-white mb-2 min-h-[1.2em]">
-              {showFirstName ? (
-                <TypewriterText
-                  text={heroData.firstName}
-                  speed={80}
-                  onComplete={() => {
-                    setTimeout(() => setShowLastName(true), 300)
-                  }}
-                />
-              ) : (
-                <span className="text-blue-400">$&gt; </span>
-              )}
-            </div>
-            {showLastName && (
-              <div className="block text-gradient min-h-[1.2em]">
-                <TypewriterText text={heroData.lastName} speed={80} />
-              </div>
-            )}
-          </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mb-8"
-          >
-            <span className="inline-block px-6 py-3 bg-white/10 backdrop-blur-md border border-white/30 rounded-full text-lg md:text-xl font-semibold text-white font-mono shadow-[0_0_20px_rgba(59,130,246,0.4)] [text-shadow:_0_2px_10px_rgba(0,0,0,0.5)]">
-              {heroData.title}
-            </span>
-          </motion.div>
-          
-          <motion.p
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-xl md:text-2xl lg:text-3xl mb-6 text-white font-light [text-shadow:_0_2px_20px_rgba(0,0,0,0.8),0_0_10px_rgba(255,255,255,0.3)]"
-          >
-            {heroData.subtitle}
-          </motion.p>
-          
-          <motion.p
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="text-lg md:text-xl mb-12 max-w-3xl mx-auto text-slate-200 leading-relaxed font-light [text-shadow:_0_2px_15px_rgba(0,0,0,0.7),0_0_8px_rgba(255,255,255,0.2)]"
-          >
-            {heroData.description}
-          </motion.p>
-          
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-          >
-            <Link href="#projects" className="btn-primary shadow-[0_0_20px_rgba(59,130,246,0.4)]">
-              <span>View My Work</span>
-            </Link>
-            <button onClick={downloadCV} className="btn-secondary shadow-[0_0_20px_rgba(168,85,247,0.4)]">
-              Download CV
-            </button>
-          </motion.div>
-
-          {/* Social Links */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="flex justify-center items-center gap-6 mt-16"
-          >
-            <a 
-              href={isExternalURL(socialData.linkedin.url) ? trackSocialLink(socialData.linkedin.url, 'hero', 'social', 'hero-social') : socialData.linkedin.url} 
-              target={isExternalURL(socialData.linkedin.url) ? "_blank" : undefined}
-              rel={isExternalURL(socialData.linkedin.url) ? "noopener noreferrer" : undefined}
-              className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-2xl hover:bg-white/20 hover:scale-110 transition-all duration-300"
+        <div className="flex justify-start w-full pl-8 md:pl-16 lg:pl-24">
+          <div className="text-left max-w-4xl px-4 sm:px-6 lg:px-8">
+            {/* Small uppercase text */}
+            <motion.p
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-sm md:text-base uppercase tracking-wider mb-4 font-sans bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent"
             >
-              {socialData.linkedin.icon.startsWith('http') ? (
-                <Image src={socialData.linkedin.icon} alt="LinkedIn" width={24} height={24} className="rounded-full" />
-              ) : (
-                <span>{socialData.linkedin.icon}</span>
-              )}
-            </a>
-            <a 
-              href={isExternalURL(socialData.researchgate.url) ? trackSocialLink(socialData.researchgate.url, 'hero', 'social', 'hero-social') : socialData.researchgate.url} 
-              target={isExternalURL(socialData.researchgate.url) ? "_blank" : undefined}
-              rel={isExternalURL(socialData.researchgate.url) ? "noopener noreferrer" : undefined}
-              className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-2xl hover:bg-white/20 hover:scale-110 transition-all duration-300"
+              {currentHeroData.firstName}
+            </motion.p>
+
+            {/* Large white name */}
+            <motion.h1
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-white font-sans"
             >
-              {socialData.researchgate.icon.startsWith('http') ? (
-                <Image src={socialData.researchgate.icon} alt="ResearchGate" width={24} height={24} className="rounded-full" />
-              ) : (
-                <span>{socialData.researchgate.icon}</span>
-              )}
-            </a>
-          </motion.div>
+              {currentHeroData.lastName}
+            </motion.h1>
+
+            {/* Professional title */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="mb-8 flex justify-start"
+            >
+              <span className="inline-block px-5 py-2 bg-white/10 backdrop-blur-md border border-white/30 rounded-full text-lg md:text-xl font-semibold text-white font-mono shadow-[0_0_20px_rgba(59,130,246,0.4)] [text-shadow:_0_2px_10px_rgba(0,0,0,0.5)]">
+                {currentHeroData.title}
+              </span>
+            </motion.div>
+            
+            {/* Descriptive text */}
+            <motion.p
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="text-lg md:text-xl lg:text-2xl mb-12 max-w-3xl text-white font-light [text-shadow:_0_2px_20px_rgba(0,0,0,0.8),0_0_10px_rgba(255,255,255,0.3)]"
+            >
+              {currentHeroData.subtitle}
+            </motion.p>
+            
+            {/* Contact and Download CV buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="mb-12 flex flex-col sm:flex-row gap-4 justify-start"
+            >
+              <Link 
+                href="#contact" 
+                className="inline-block px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-slate-100 transition-colors duration-200 font-sans text-lg"
+              >
+                {language === 'en' ? 'Contact me' : 'Kontaktiraj me'}
+              </Link>
+              <a 
+                href={currentHeroData.cvUrl}
+                download
+                className="inline-block px-8 py-4 bg-transparent border-2 border-white/30 text-white rounded-full font-medium hover:bg-white/10 hover:border-white/50 transition-colors duration-200 font-sans text-lg"
+              >
+                {language === 'en' ? 'Download CV' : 'Preuzmi CV'}
+              </a>
+            </motion.div>
+          </div>
         </div>
       </div>
+
+      {/* Logo and Social Links - Fixed on right side (hidden on mobile) */}
+      <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="hidden md:flex fixed right-8 top-1/2 -translate-y-1/2 z-50 flex-col items-center gap-6"
+          >
+            {/* Logo */}
+            <div className="w-16 h-16 mb-4 opacity-80 hover:opacity-100 transition-opacity duration-300">
+              <MatrixLogo />
+            </div>
+            <a 
+              href={isExternalURL(currentSocialData.linkedin.url) ? trackSocialLink(currentSocialData.linkedin.url, 'hero', 'social', 'hero-social') : currentSocialData.linkedin.url} 
+              target={isExternalURL(currentSocialData.linkedin.url) ? "_blank" : undefined}
+              rel={isExternalURL(currentSocialData.linkedin.url) ? "noopener noreferrer" : undefined}
+              className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300"
+            >
+              {(currentSocialData.linkedin.icon.startsWith('http') || currentSocialData.linkedin.icon.startsWith('/')) ? (
+                <Image 
+                  src={currentSocialData.linkedin.icon} 
+                  alt="LinkedIn" 
+                  width={24} 
+                  height={24} 
+                  className="w-6 h-6 brightness-0 invert"
+                />
+              ) : (
+                <span>{currentSocialData.linkedin.icon}</span>
+              )}
+            </a>
+            <a 
+              href={isExternalURL(currentSocialData.github.url) ? trackSocialLink(currentSocialData.github.url, 'hero', 'social', 'hero-social') : currentSocialData.github.url} 
+              target={isExternalURL(currentSocialData.github.url) ? "_blank" : undefined}
+              rel={isExternalURL(currentSocialData.github.url) ? "noopener noreferrer" : undefined}
+              className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300"
+            >
+              {(currentSocialData.github.icon.startsWith('http') || currentSocialData.github.icon.startsWith('/')) ? (
+                <Image 
+                  src={currentSocialData.github.icon} 
+                  alt="GitHub" 
+                  width={24} 
+                  height={24} 
+                  className="w-6 h-6 brightness-0 invert"
+                />
+              ) : (
+                <span>{currentSocialData.github.icon}</span>
+              )}
+            </a>
+            <a 
+              href={isExternalURL(currentSocialData.researchgate.url) ? trackSocialLink(currentSocialData.researchgate.url, 'hero', 'social', 'hero-social') : currentSocialData.researchgate.url} 
+              target={isExternalURL(currentSocialData.researchgate.url) ? "_blank" : undefined}
+              rel={isExternalURL(currentSocialData.researchgate.url) ? "noopener noreferrer" : undefined}
+              className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300"
+            >
+              {(currentSocialData.researchgate.icon.startsWith('http') || currentSocialData.researchgate.icon.startsWith('/')) ? (
+                <Image 
+                  src={currentSocialData.researchgate.icon} 
+                  alt="ResearchGate" 
+                  width={24} 
+                  height={24} 
+                  className="w-6 h-6 brightness-0 invert"
+                />
+              ) : (
+                <span>{currentSocialData.researchgate.icon}</span>
+              )}
+            </a>
+      </motion.div>
       
       {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1 }}
+        transition={{ duration: 0.8, delay: 0.8 }}
         className="absolute bottom-8 md:bottom-12 left-1/2 transform -translate-x-1/2 z-20"
       >
         <Link href="#about" className="flex flex-col items-center text-white/50 hover:text-white transition-colors duration-300">

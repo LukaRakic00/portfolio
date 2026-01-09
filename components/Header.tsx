@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import MatrixLogo from './MatrixLogo'
-import { trackSocialLink, isExternalURL } from '@/lib/utm'
 import { useTranslation } from './TranslationProvider'
+import { socialData } from '@/data/social'
+import { trackSocialLink, isExternalURL } from '@/lib/utm'
 
 // Fallback hook for when TranslationProvider is not available
 export function useTranslationSafe() {
@@ -31,38 +32,20 @@ const navItems = [
   { name: 'Contact', href: '#contact' },
 ]
 
-interface SocialData {
-  linkedin: { url: string; icon: string }
-  researchgate: { url: string; icon: string }
-}
-
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { language, setLanguage, isLoading } = useTranslationSafe()
-  const [socialData, setSocialData] = useState<SocialData>({
-    linkedin: { url: 'https://linkedin.com', icon: '💼' },
-    researchgate: { url: 'https://researchgate.net', icon: '🔬' },
-  })
-
-  useEffect(() => {
-    fetchSocialData()
-  }, [language])
-
-  const fetchSocialData = async () => {
-    try {
-      const response = await fetch(`/api/data/social?lang=${language}`)
-      const data = await response.json()
-      setSocialData(data)
-    } catch (error) {
-      console.error('Error fetching social data:', error)
-    }
-  }
-
+  
+  // Use static data for social links
+  const currentSocialData = useMemo(() => socialData[language], [language])
+  
   const socialLinks = [
-    { name: 'LinkedIn', href: socialData.linkedin.url, icon: socialData.linkedin.icon },
-    { name: 'ResearchGate', href: socialData.researchgate.url, icon: socialData.researchgate.icon },
+    { name: 'LinkedIn', href: currentSocialData.linkedin.url, icon: currentSocialData.linkedin.icon },
+    { name: 'GitHub', href: currentSocialData.github.url, icon: currentSocialData.github.icon },
+    { name: 'ResearchGate', href: currentSocialData.researchgate.url, icon: currentSocialData.researchgate.icon },
   ]
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -87,54 +70,38 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 relative group"
+                className="text-slate-300 hover:text-white font-semibold text-lg transition-colors duration-300 relative group"
               >
                 {item.name}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 group-hover:w-full transition-all duration-300" />
               </Link>
             ))}
             
-            {/* Social Links */}
-            <div className="flex items-center space-x-3 ml-6 pl-6 border-l border-white/10">
-              {socialLinks.map((link) => {
-                const href = isExternalURL(link.href) 
-                  ? trackSocialLink(link.href, 'header', 'social', 'navbar-social')
-                  : link.href
-                return (
-                  <a
-                    key={link.name}
-                    href={href}
-                    target={isExternalURL(link.href) ? "_blank" : undefined}
-                    rel={isExternalURL(link.href) ? "noopener noreferrer" : undefined}
-                    className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center text-lg hover:bg-white/10 hover:scale-110 hover:border-white/20 transition-all duration-300"
-                    aria-label={link.name}
-                    title={link.name}
-                  >
-                    {link.icon.startsWith('http') ? (
-                      <Image src={link.icon} alt={link.name} width={20} height={20} className="rounded-full" />
-                    ) : (
-                      <span>{link.icon}</span>
-                    )}
-                  </a>
-                )
-              })}
-              
-              {/* Language Toggle */}
-              <button
-                onClick={() => setLanguage(language === 'en' ? 'sr' : 'en')}
-                disabled={isLoading}
-                className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center text-lg hover:bg-white/10 hover:scale-110 hover:border-white/20 transition-all duration-300 disabled:opacity-50"
-                aria-label="Toggle language"
-                title={language === 'en' ? 'Switch to Serbian' : 'Switch to English'}
-              >
-                {isLoading ? '⟳' : language === 'en' ? '🇷🇸' : '🇬🇧'}
-              </button>
-            </div>
+            {/* Language Toggle */}
+            <button
+              onClick={() => setLanguage(language === 'en' ? 'sr' : 'en')}
+              disabled={isLoading}
+              className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-110 hover:border-white/20 transition-all duration-300 disabled:opacity-50 ml-4 overflow-hidden"
+              aria-label="Toggle language"
+              title={language === 'en' ? 'Switch to Serbian' : 'Switch to English'}
+            >
+              {isLoading ? (
+                <span className="text-lg">⟳</span>
+              ) : (
+                <Image 
+                  src="/world.png" 
+                  alt="Language toggle" 
+                  width={24} 
+                  height={24} 
+                  className="w-6 h-6 object-contain"
+                />
+              )}
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -164,12 +131,13 @@ export default function Header() {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-slate-300 hover:text-white font-medium transition-colors duration-300 py-2 px-4 rounded-lg hover:bg-white/5"
+                    className="text-slate-300 hover:text-white font-semibold text-lg transition-colors duration-300 py-2 px-4 rounded-lg hover:bg-white/5"
                   >
                     {item.name}
                   </Link>
                 ))}
                 <div className="flex items-center space-x-3 pt-4 border-t border-white/10">
+                  {/* Social Links Mobile */}
                   {socialLinks.map((link) => {
                     const href = isExternalURL(link.href) 
                       ? trackSocialLink(link.href, 'mobile-menu', 'social', 'navbar-social')
@@ -180,12 +148,13 @@ export default function Header() {
                         href={href}
                         target={isExternalURL(link.href) ? "_blank" : undefined}
                         rel={isExternalURL(link.href) ? "noopener noreferrer" : undefined}
-                        className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center text-lg hover:bg-white/10 hover:scale-110 transition-all duration-300"
+                        className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-110 transition-all duration-300"
                         aria-label={link.name}
                         title={link.name}
+                        onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        {link.icon.startsWith('http') ? (
-                          <Image src={link.icon} alt={link.name} width={20} height={20} className="rounded-full" />
+                        {(link.icon.startsWith('http') || link.icon.startsWith('/')) ? (
+                          <Image src={link.icon} alt={link.name} width={20} height={20} className="w-5 h-5 brightness-0 invert" />
                         ) : (
                           <span>{link.icon}</span>
                         )}
@@ -197,11 +166,21 @@ export default function Header() {
                   <button
                     onClick={() => setLanguage(language === 'en' ? 'sr' : 'en')}
                     disabled={isLoading}
-                    className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center text-lg hover:bg-white/10 hover:scale-110 transition-all duration-300 disabled:opacity-50"
+                    className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-110 transition-all duration-300 disabled:opacity-50 overflow-hidden"
                     aria-label="Toggle language"
                     title={language === 'en' ? 'Switch to Serbian' : 'Switch to English'}
                   >
-                    {isLoading ? '⟳' : language === 'en' ? '🇷🇸' : '🇬🇧'}
+                    {isLoading ? (
+                      <span className="text-lg">⟳</span>
+                    ) : (
+                      <Image 
+                        src="/world.png" 
+                        alt="Language toggle" 
+                        width={20} 
+                        height={20} 
+                        className="w-5 h-5 object-contain"
+                      />
+                    )}
                   </button>
                 </div>
               </div>

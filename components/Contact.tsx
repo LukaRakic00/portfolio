@@ -2,13 +2,9 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import { useTranslationSafe } from './Header'
-
-interface ContactData {
-  title: string
-  subtitle: string
-}
+import { contactData, type ContactData } from '@/data/contact'
 
 export default function Contact() {
   const { language } = useTranslationSafe()
@@ -20,24 +16,9 @@ export default function Contact() {
     message: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [contactData, setContactData] = useState<ContactData>({
-    title: 'Get In Touch',
-    subtitle: 'Have a project in mind? Let\'s work together to bring it to life',
-  })
 
-  useEffect(() => {
-    fetchContactData()
-  }, [language])
-
-  const fetchContactData = async () => {
-    try {
-      const response = await fetch(`/api/data/contact?lang=${language}`)
-      const data = await response.json()
-      setContactData(data)
-    } catch (error) {
-      console.error('Error fetching contact data:', error)
-    }
-  }
+  // Use static data instead of API calls
+  const currentContactData = useMemo(() => contactData[language], [language])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,9 +61,9 @@ export default function Contact() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="section-title">{contactData.title}</h2>
+          <h2 className="section-title">{currentContactData.title}</h2>
           <p className="section-subtitle max-w-2xl mx-auto">
-            {contactData.subtitle}
+            {currentContactData.subtitle}
           </p>
         </motion.div>
 

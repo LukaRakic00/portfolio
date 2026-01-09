@@ -1,41 +1,23 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import Image from 'next/image'
 import { trackSocialLink, isExternalURL } from '@/lib/utm'
 import MatrixLogo from './MatrixLogo'
 import { useTranslationSafe } from './Header'
-
-interface SocialData {
-  linkedin: { url: string; icon: string }
-  researchgate: { url: string; icon: string }
-}
+import { socialData } from '@/data/social'
 
 export default function Footer() {
   const { language } = useTranslationSafe()
-  const [socialData, setSocialData] = useState<SocialData>({
-    linkedin: { url: 'https://linkedin.com', icon: '💼' },
-    researchgate: { url: 'https://researchgate.net', icon: '🔬' },
-  })
-
-  useEffect(() => {
-    fetchSocialData()
-  }, [language])
-
-  const fetchSocialData = async () => {
-    try {
-      const response = await fetch(`/api/data/social?lang=${language}`)
-      const data = await response.json()
-      setSocialData(data)
-    } catch (error) {
-      console.error('Error fetching social data:', error)
-    }
-  }
+  
+  // Use static data instead of API calls
+  const currentSocialData = useMemo(() => socialData[language], [language])
 
   const socialLinks = [
-    { name: 'LinkedIn', href: socialData.linkedin.url, icon: socialData.linkedin.icon },
-    { name: 'ResearchGate', href: socialData.researchgate.url, icon: socialData.researchgate.icon },
+    { name: 'LinkedIn', href: currentSocialData.linkedin.url, icon: currentSocialData.linkedin.icon },
+    { name: 'GitHub', href: currentSocialData.github.url, icon: currentSocialData.github.icon },
+    { name: 'ResearchGate', href: currentSocialData.researchgate.url, icon: currentSocialData.researchgate.icon },
   ]
   return (
     <footer className="bg-slate-950 border-t border-white/10 text-white py-16">
@@ -97,8 +79,8 @@ export default function Footer() {
                     aria-label={link.name}
                     title={link.name}
                   >
-                    {link.icon.startsWith('http') ? (
-                      <Image src={link.icon} alt={link.name} width={24} height={24} className="rounded-full" />
+                    {(link.icon.startsWith('http') || link.icon.startsWith('/')) ? (
+                      <Image src={link.icon} alt={link.name} width={24} height={24} className="w-6 h-6 brightness-0 invert" />
                     ) : (
                       <span>{link.icon}</span>
                     )}

@@ -35,12 +35,12 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   }
 
   const translate = async (text: string): Promise<string> => {
-    // Not used anymore - data comes from Redis
+    // Not used anymore - data comes from static files
     return text
   }
 
   const t = (text: string): string => {
-    // Not used anymore - data comes from Redis
+    // Not used anymore - data comes from static files
     return text
   }
 
