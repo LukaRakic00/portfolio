@@ -49,7 +49,7 @@ export const skillsData: Record<'en' | 'sr', Technology[]> = {
       id: 'mongodb-atlas',
       name: 'MongoDB',
       category: 'Database',
-      icon: '/icons/database-svgrepo-com.svg',
+      icon: '/icons/MongoDB.svg',
     },
     // Frameworks & Libraries
     {

@@ -67,16 +67,14 @@ export default function Hero() {
             </motion.h1>
 
             {/* Professional title */}
-            <motion.div
+            <motion.p
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="mb-8 flex justify-start"
+              className="text-2xl md:text-3xl lg:text-4xl mb-8 text-slate-400 font-semibold"
             >
-              <span className="inline-block px-5 py-2 bg-white/10 backdrop-blur-md border border-white/30 rounded-full text-lg md:text-xl font-semibold text-white font-mono shadow-[0_0_20px_rgba(59,130,246,0.4)] [text-shadow:_0_2px_10px_rgba(0,0,0,0.5)]">
-                {currentHeroData.title}
-              </span>
-            </motion.div>
+              {currentHeroData.title}
+            </motion.p>
             
             {/* Descriptive text */}
             <motion.p
