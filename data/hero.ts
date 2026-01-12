@@ -14,7 +14,7 @@ export const heroData: Record<'en' | 'sr', HeroData> = {
     title: 'Junior Software Engineer',
     subtitle: 'A lifetime programmer who loves software development.',
     description: 'A lifetime programmer who loves software development.',
-    cvUrl: '/LUKA_RAKIC_CV.pdf',
+    cvUrl: '/CV/html/LUKA RAKIC - ENGLISH.html',
   },
   sr: {
     firstName: 'ZDRAVO, MOJE IME JE',
@@ -22,7 +22,7 @@ export const heroData: Record<'en' | 'sr', HeroData> = {
     title: 'Junior Software Engineer',
     subtitle: 'Programer ceo život koji voli razvoj softvera.',
     description: 'Programer ceo život koji voli razvoj softvera.',
-    cvUrl: '/LUKA_RAKIC_CV.pdf',
+    cvUrl: '/CV/html/LUKA RAKIĆ - SRPSKI.html',
   },
 }
 

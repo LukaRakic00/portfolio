@@ -7,12 +7,22 @@ import { trackSocialLink, isExternalURL } from '@/lib/utm'
 import MatrixLogo from './MatrixLogo'
 import { useTranslationSafe } from './Header'
 import { socialData } from '@/data/social'
+import { navigationData } from '@/data/navigation'
 
 export default function Footer() {
   const { language } = useTranslationSafe()
   
   // Use static data instead of API calls
   const currentSocialData = useMemo(() => socialData[language], [language])
+  const currentNavData = useMemo(() => navigationData[language], [language])
+
+  const navItems = [
+    { name: currentNavData.home, href: '#home' },
+    { name: currentNavData.about, href: '#about' },
+    { name: currentNavData.services, href: '#services' },
+    { name: currentNavData.projects, href: '#projects' },
+    { name: currentNavData.contact, href: '#contact' },
+  ]
 
   const socialLinks = [
     { name: 'LinkedIn', href: currentSocialData.linkedin.url, icon: currentSocialData.linkedin.icon },
@@ -28,42 +38,26 @@ export default function Footer() {
               <MatrixLogo />
             </div>
             <p className="text-slate-400 leading-relaxed">
-              Creating modern digital experiences with passion and innovation.
+              {currentNavData.footerDescription}
             </p>
           </div>
           
           <div>
-            <h4 className="text-lg font-bold mb-6 text-white">Quick Links</h4>
+            <h4 className="text-lg font-bold mb-6 text-white">{currentNavData.quickLinks}</h4>
             <ul className="space-y-3">
-              <li>
-                <Link href="#home" className="text-slate-400 hover:text-white transition-colors duration-300 flex items-center group">
-                  <span className="w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-4 mr-0 group-hover:mr-2 transition-all duration-300" />
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="#about" className="text-slate-400 hover:text-white transition-colors duration-300 flex items-center group">
-                  <span className="w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-4 mr-0 group-hover:mr-2 transition-all duration-300" />
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="#projects" className="text-slate-400 hover:text-white transition-colors duration-300 flex items-center group">
-                  <span className="w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-4 mr-0 group-hover:mr-2 transition-all duration-300" />
-                  Projects
-                </Link>
-              </li>
-              <li>
-                <Link href="#contact" className="text-slate-400 hover:text-white transition-colors duration-300 flex items-center group">
-                  <span className="w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-4 mr-0 group-hover:mr-2 transition-all duration-300" />
-                  Contact
-                </Link>
-              </li>
+              {navItems.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="text-slate-400 hover:text-white transition-colors duration-300 flex items-center group">
+                    <span className="w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-4 mr-0 group-hover:mr-2 transition-all duration-300" />
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           
           <div>
-            <h4 className="text-lg font-bold mb-6 text-white">Social</h4>
+            <h4 className="text-lg font-bold mb-6 text-white">{currentNavData.social}</h4>
             <div className="flex space-x-4">
               {socialLinks.map((link) => {
                 const href = isExternalURL(link.href) 
@@ -92,7 +86,7 @@ export default function Footer() {
         </div>
         
         <div className="pt-8 border-t border-white/10 text-center text-slate-400">
-          <p>&copy; {new Date().getFullYear()} Portfolio. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {currentNavData.footerCopyright}</p>
         </div>
       </div>
     </footer>

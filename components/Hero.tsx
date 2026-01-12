@@ -44,8 +44,8 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/20 to-slate-950/40 pointer-events-none z-[5]" />
 
       <div className="section-container relative z-10 w-full">
-        <div className="flex justify-start w-full pl-8 md:pl-16 lg:pl-24">
-          <div className="text-left max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-center md:justify-start w-full md:pl-16 lg:pl-24">
+          <div className="text-left max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto md:mx-0">
             {/* Small uppercase text */}
             <motion.p
               initial={{ opacity: 0, y: -20 }}
@@ -91,20 +91,31 @@ export default function Hero() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="mb-12 flex flex-col sm:flex-row gap-4 justify-start"
+              className="mb-12 flex flex-col sm:flex-row gap-3 md:gap-4 justify-center md:justify-start"
             >
               <Link 
                 href="#contact" 
-                className="inline-block px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-slate-100 transition-colors duration-200 font-sans text-lg"
+                className="inline-block px-5 py-2.5 md:px-8 md:py-4 bg-white text-black rounded-full font-medium hover:bg-slate-100 transition-all duration-200 font-sans text-sm md:text-lg shadow-lg hover:shadow-xl hover:scale-105"
               >
                 {language === 'en' ? 'Contact me' : 'Kontaktiraj me'}
               </Link>
+              {/* Mobile: Show PNG preview */}
+              <a 
+                href={language === 'en' ? '/images/LUKA RAKIC - ENGLISH.png' : '/images/LUKA RAKIĆ - SRPSKI.png'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="md:hidden inline-block px-5 py-2.5 bg-transparent border-2 border-white/30 text-white rounded-full font-medium hover:bg-white/10 hover:border-white/50 transition-all duration-200 font-sans text-sm shadow-lg hover:shadow-xl hover:scale-105"
+              >
+                {language === 'en' ? 'View CV' : 'Pogledaj CV'}
+              </a>
+              {/* Desktop: Show HTML CV */}
               <a 
                 href={currentHeroData.cvUrl}
-                download
-                className="inline-block px-8 py-4 bg-transparent border-2 border-white/30 text-white rounded-full font-medium hover:bg-white/10 hover:border-white/50 transition-colors duration-200 font-sans text-lg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden md:inline-block px-8 py-4 bg-transparent border-2 border-white/30 text-white rounded-full font-medium hover:bg-white/10 hover:border-white/50 transition-all duration-200 font-sans text-lg shadow-lg hover:shadow-xl hover:scale-105"
               >
-                {language === 'en' ? 'Download CV' : 'Preuzmi CV'}
+                {language === 'en' ? 'View CV' : 'Pogledaj CV'}
               </a>
             </motion.div>
           </div>

@@ -95,7 +95,7 @@ function ProjectCard({ project, index, isInView, language }: { project: Project;
       
       <div className="relative card overflow-hidden h-full flex flex-col">
         <div className="relative w-full h-64 overflow-hidden">
-          {!imageError ? (
+          {project.image && !imageError ? (
             <Image
               src={project.image}
               alt={project.title}
@@ -133,27 +133,58 @@ function ProjectCard({ project, index, isInView, language }: { project: Project;
             ))}
           </div>
           
-          {isExternalURL(project.link) ? (
-            <a
-              href={trackProjectLink(project.link, project.title, 'projects-section')}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-outline w-full text-center inline-block group/link"
-            >
-              <span className="group-hover/link:text-gradient transition-colors duration-300">
-                {language === 'en' ? 'View Project →' : 'Pogledaj Projekat →'}
-              </span>
-            </a>
-          ) : (
-            <Link
-              href={project.link}
-              className="btn-outline w-full text-center inline-block group/link"
-            >
-              <span className="group-hover/link:text-gradient transition-colors duration-300">
-                {language === 'en' ? 'View Project →' : 'Pogledaj Projekat →'}
-              </span>
-            </Link>
-          )}
+          {(() => {
+            const hasWebsite = project.website || (!project.github && project.link && project.link !== '#')
+            const hasGithub = project.github
+            const showBoth = hasWebsite && hasGithub
+            
+            return (
+              <div className={`flex ${showBoth ? 'gap-3' : ''}`}>
+                {/* Website button */}
+                {hasWebsite && (
+                  isExternalURL(project.website || project.link || '') ? (
+                    <a
+                      href={trackProjectLink(project.website || project.link || '', project.title, 'projects-section')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`btn-outline text-center inline-block group/link ${showBoth ? 'flex-1' : 'w-full'}`}
+                    >
+                      <span className="group-hover/link:text-gradient transition-colors duration-300">
+                        {project.id === 'oracle-db' 
+                          ? (language === 'en' ? 'View Certificate →' : 'Pogledaj Sertifikat →')
+                          : (language === 'en' ? 'Website →' : 'Sajt →')}
+                      </span>
+                    </a>
+                  ) : (
+                    <Link
+                      href={project.website || project.link || '#'}
+                      className={`btn-outline text-center inline-block group/link ${showBoth ? 'flex-1' : 'w-full'}`}
+                    >
+                      <span className="group-hover/link:text-gradient transition-colors duration-300">
+                        {project.id === 'oracle-db' 
+                          ? (language === 'en' ? 'View Certificate →' : 'Pogledaj Sertifikat →')
+                          : (language === 'en' ? 'Website →' : 'Sajt →')}
+                      </span>
+                    </Link>
+                  )
+                )}
+                
+                {/* GitHub button */}
+                {hasGithub && project.github && (
+                  <a
+                    href={trackProjectLink(project.github, project.title, 'projects-section')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`btn-outline text-center inline-block group/link ${showBoth ? 'flex-1' : 'w-full'}`}
+                  >
+                    <span className="group-hover/link:text-gradient transition-colors duration-300">
+                      {language === 'en' ? 'GitHub →' : 'GitHub →'}
+                    </span>
+                  </a>
+                )}
+              </div>
+            )
+          })()}
         </div>
       </div>
     </motion.div>

@@ -48,28 +48,30 @@
   }
   
   .section-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32;
+    @apply max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-24 md:py-40;
     overflow-x: hidden;
     max-width: 100%;
   }
   
   .section-title {
-    @apply text-3xl md:text-5xl font-black mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent;
+    @apply text-3xl md:text-5xl font-black mb-8 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-feature-settings: "liga" 1, "kern" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+    letter-spacing: 0.02em;
+    line-height: 100px;
   }
-
+  
   .section-title-dark {
-    @apply text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent;
+    @apply text-5xl md:text-7xl font-black mb-8 bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
   }
   
   .section-subtitle {
-    @apply text-xl md:text-2xl text-slate-400 mb-16 font-light;
+    @apply text-xl md:text-2xl text-slate-400 mb-20 font-light;
   }
 
   .card {

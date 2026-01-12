@@ -34,9 +34,4 @@ export const dataName: Record<'en' | 'sr', DataType> = {
     // podaci na srpskom
   },
 }
-```
-
-## Napomena
-
-Nakon što prebaciš podatke, sve komponente će automatski koristiti statičke podatke umesto API poziva. Ovo poboljšava SEO jer su podaci direktno u HTML-u.
 

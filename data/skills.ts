@@ -53,12 +53,6 @@ export const skillsData: Record<'en' | 'sr', Technology[]> = {
     },
     // Frameworks & Libraries
     {
-      id: 'spring-boot',
-      name: 'Spring Boot',
-      category: 'Framework',
-      icon: '/icons/Spring.svg',
-    },
-    {
       id: 'react',
       name: 'React.js',
       category: 'Framework',
@@ -70,11 +64,24 @@ export const skillsData: Record<'en' | 'sr', Technology[]> = {
       category: 'Framework',
       icon: '/icons/next.svg',
     },
+    // Backend
+    {
+      id: 'spring-boot',
+      name: 'Spring Boot',
+      category: 'Backend',
+      icon: '/icons/Spring.svg',
+    },
+    {
+      id: 'java',
+      name: 'Java',
+      category: 'Backend',
+      icon: '/icons/java.svg',
+    },
     {
       id: 'api',
       name: 'REST API',
       category: 'Backend',
-      icon: '/icons/api.svg',
+      icon: '/images/rest.svg',
     },
     // Cloud & DevOps
     {
@@ -93,7 +100,7 @@ export const skillsData: Record<'en' | 'sr', Technology[]> = {
       id: 'aws',
       name: 'AWS',
       category: 'Cloud & DevOps',
-      icon: '/icons/api.svg',
+      icon: '/images/AWS.svg',
     },
     {
       id: 'vercel',
@@ -111,12 +118,6 @@ export const skillsData: Record<'en' | 'sr', Technology[]> = {
   ],
   sr: [
     // Programski Jezici
-    {
-      id: 'java',
-      name: 'Java',
-      category: 'Programski Jezik',
-      icon: '/icons/java.svg',
-    },
     {
       id: 'javascript',
       name: 'JavaScript',
@@ -156,12 +157,6 @@ export const skillsData: Record<'en' | 'sr', Technology[]> = {
     },
     // Framework-i i Biblioteke
     {
-      id: 'spring-boot',
-      name: 'Spring Boot',
-      category: 'Framework',
-      icon: '/icons/java2.svg',
-    },
-    {
       id: 'react',
       name: 'React.js',
       category: 'Framework',
@@ -173,11 +168,24 @@ export const skillsData: Record<'en' | 'sr', Technology[]> = {
       category: 'Framework',
       icon: '/icons/next.svg',
     },
+    // Backend
+    {
+      id: 'spring-boot',
+      name: 'Spring Boot',
+      category: 'Backend',
+      icon: '/icons/java2.svg',
+    },
+    {
+      id: 'java',
+      name: 'Java',
+      category: 'Backend',
+      icon: '/icons/java.svg',
+    },
     {
       id: 'api',
       name: 'REST API',
       category: 'Backend',
-      icon: '/icons/api.svg',
+      icon: '/images/rest.svg',
     },
     // Cloud & DevOps
     {
@@ -196,7 +204,7 @@ export const skillsData: Record<'en' | 'sr', Technology[]> = {
       id: 'aws',
       name: 'AWS',
       category: 'Cloud & DevOps',
-      icon: '/icons/api.svg',
+      icon: '/images/AWS.svg',
     },
     {
       id: 'vercel',

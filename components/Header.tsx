@@ -7,6 +7,8 @@ import Image from 'next/image'
 import MatrixLogo from './MatrixLogo'
 import { useTranslation } from './TranslationProvider'
 import { socialData } from '@/data/social'
+import { navigationData } from '@/data/navigation'
+import { heroData } from '@/data/hero'
 import { trackSocialLink, isExternalURL } from '@/lib/utm'
 
 // Fallback hook for when TranslationProvider is not available
@@ -25,20 +27,23 @@ export function useTranslationSafe() {
   }
 }
 
-const navItems = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Contact', href: '#contact' },
-]
-
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { language, setLanguage, isLoading } = useTranslationSafe()
   
-  // Use static data for social links
+  // Use static data for social links and navigation
   const currentSocialData = useMemo(() => socialData[language], [language])
+  const currentNavData = useMemo(() => navigationData[language], [language])
+  const currentHeroData = useMemo(() => heroData[language], [language])
+  
+  const navItems = [
+    { name: currentNavData.home, href: '#home' },
+    { name: currentNavData.about, href: '#about' },
+    { name: currentNavData.services, href: '#services' },
+    { name: currentNavData.projects, href: '#projects' },
+    { name: currentNavData.contact, href: '#contact' },
+  ]
   
   const socialLinks = [
     { name: 'LinkedIn', href: currentSocialData.linkedin.url, icon: currentSocialData.linkedin.icon },
@@ -136,6 +141,15 @@ export default function Header() {
                     {item.name}
                   </Link>
                 ))}
+                {/* Download CV Button Mobile */}
+                <a
+                  href={language === 'en' ? '/CV/download/LUKA RAKIC - ENGLISH.pdf' : '/CV/download/LUKA RAKIĆ - SRPSKI.pdf'}
+                  download
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="inline-block px-5 py-2.5 bg-white text-black rounded-full font-medium hover:bg-slate-100 transition-all duration-200 font-sans text-sm shadow-lg hover:shadow-xl hover:scale-105 text-center"
+                >
+                  {language === 'en' ? 'Download CV' : 'Preuzmi CV'}
+                </a>
                 <div className="flex items-center space-x-3 pt-4 border-t border-white/10">
                   {/* Social Links Mobile */}
                   {socialLinks.map((link) => {
