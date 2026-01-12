@@ -94,25 +94,35 @@ function ProjectCard({ project, index, isInView, language }: { project: Project;
       />
       
       <div className="relative card overflow-hidden h-full flex flex-col">
-        <div className="relative w-full h-64 overflow-hidden">
-          {project.image && !imageError ? (
-            <Image
-              src={project.image}
-              alt={project.title}
-              fill
-              className="object-cover group-hover:scale-110 transition-transform duration-700"
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <div className={`w-full h-full bg-gradient-to-br ${project.gradient} flex items-center justify-center`}>
-              <div className="text-center text-white">
-                <div className="text-5xl mb-3">🚀</div>
-                <p className="text-lg font-semibold">Project Image</p>
+        {project.image ? (
+          <div className="relative w-full h-64 overflow-hidden">
+            {!imageError ? (
+              <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-700"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className={`w-full h-full bg-gradient-to-br ${project.gradient} flex items-center justify-center`}>
+                <div className="text-center text-white">
+                  <div className="text-5xl mb-3">🚀</div>
+                  <p className="text-lg font-semibold">Project Image</p>
+                </div>
               </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </div>
+        ) : (
+          <div className={`w-full h-48 bg-gradient-to-br ${project.gradient} flex items-center justify-center relative overflow-hidden`}>
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent" />
+            <div className="text-center text-white relative z-10">
+              <div className="text-4xl mb-2">💼</div>
+              <p className="text-sm font-semibold opacity-90">{project.title}</p>
             </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        </div>
+          </div>
+        )}
         
         <div className="p-6 flex-1 flex flex-col">
           <h3 className="text-2xl font-black text-white mb-3 group-hover:text-gradient transition-colors duration-300">

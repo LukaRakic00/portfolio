@@ -34,7 +34,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           <div>
-            <div className="h-24 w-24 md:h-32 md:w-32 mb-4">
+            <div className="h-16 w-16 md:h-24 md:w-24 lg:h-32 lg:w-32 mb-4">
               <MatrixLogo />
             </div>
             <p className="text-slate-400 leading-relaxed">
